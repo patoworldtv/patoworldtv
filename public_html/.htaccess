@@ -1,0 +1,23 @@
+# Force HTTPS and non-WWW
+RewriteEngine On
+
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\.patoworldtv\.com$ [NC]
+RewriteRule ^(.*)$ https://patoworldtv.com/$1 [L,R=301]
+
+# Route sitemap.xml to our dynamic sitemap engine
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+# Disable Hostinger aggressive caching
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+  Header set Pragma "no-cache"
+  Header set Expires 0
+</IfModule>
+
+# Protect backend and library folders from direct browser access
+RedirectMatch 403 ^/phpmailer/.*$
+RedirectMatch 403 ^/storage/.*$
+
+# Clean URLs & Disable Directory Indexing
+Options -Indexes

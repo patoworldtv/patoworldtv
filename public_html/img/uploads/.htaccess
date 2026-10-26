@@ -1,0 +1,6 @@
+# Block PHP execution in uploads
+<FilesMatch "\.(php|php7|phtml)$">
+  Deny from all
+</FilesMatch>
+
+Options -Indexes

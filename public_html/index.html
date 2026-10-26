@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniCore E-Shop ERP & Business Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for enterprise analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .fade-in { animation: fadeIn 0.25s ease-in-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:inset-auto flex flex-col shadow-xl">
+            <!-- Brand Header -->
+            <div class="flex items-center justify-between h-16 px-6 bg-slate-950 border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                        <i class="fa-solid fa-boxes-stacked text-lg"></i>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-white">OmniCore <span class="text-brand-500 font-light text-xs uppercase px-1.5 py-0.5 rounded bg-brand-500/10 border border-brand-500/20">ERP</span></span>
+                </div>
+                <button id="closeSidebar" class="md:hidden text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+                <p class="px-3 text-[11px] font-semibold tracking-wider text-slate-500 uppercase mb-2">Core ERP Modules</p>
+                
+                <a href="#dashboard" onclick="switchTab('dashboard')" class="nav-link flex items-center px-3.5 py-3 rounded-xl text-sm font-medium transition-all group active bg-brand-600 text-white shadow-lg shadow-brand-600/25">
+                    <i class="fa-solid fa-chart-pie w-6 text-center text-base mr-2.5 transition-transform group-hover:scale-110"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="#orders" onclick="switchTab('orders')" class="nav-link flex items-center px-3.5 py-3 rounded-xl text-sm font-medium transition-all group text-slate-400 hover:text-white hover:bg-slate-800/60">
+                    <i class="fa-solid fa-cart-shopping w-6 text-center text-base mr-2.5 transition-transform group-hover:scale-110"></i>
+                    <span>Orders (OMS)</span>
+                    <span id="badgePendingOrders" class="ml-auto px-2 py-0.5 text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full">0</span>
+                </a>
+
+                <a href="#inventory" onclick="switchTab('inventory')" class="nav-link flex items-center px-3.5 py-3 rounded-xl text-sm font-medium transition-all group text-slate-400 hover:text-white hover:bg-slate-800/60">
+                    <i class="fa-solid fa-warehouse w-6 text-center text-base mr-2.5 transition-transform group-hover:scale-110"></i>
+                    <span>Inventory & Stock</span>
+                    <span id="badgeLowStock" class="ml-auto px-2 py-0.5 text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-full">0</span>
+                </a>
+
+                <a href="#customers" onclick="switchTab('customers')" class="nav-link flex items-center px-3.5 py-3 rounded-xl text-sm font-medium transition-all group text-slate-400 hover:text-white hover:bg-slate-800/60">
+                    <i class="fa-solid fa-users w-6 text-center text-base mr-2.5 transition-transform group-hover:scale-110"></i>
+                    <span>Customers (CRM)</span>
+                </a>
+
+                <a href="#analytics" onclick="switchTab('analytics')" class="nav-link flex items-center px-3.5 py-3 rounded-xl text-sm font-medium transition-all group text-slate-400 hover:text-white hover:bg-slate-800/60">
+                    <i class="fa-solid fa-chart-line w-6 text-center text-base mr-2.5 transition-transform group-hover:scale-110"></i>
+                    <span>Financial Reports</span>
+                </a>
+            </nav>
+
+            <!-- Sidebar User Profile Footer -->
+            <div class="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white border border-slate-700">
+                        <span>AD</span>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-white leading-tight">Admin Manager</h4>
+                        <p class="text-xs text-slate-400">Store Controller</p>
+                    </div>
+                </div>
+                <button onclick="showToast('Secure session active.', 'info')" class="text-slate-400 hover:text-brand-400 transition-colors p-2 rounded-lg hover:bg-slate-800" title="System Status">
+                    <i class="fa-solid fa-shield-halved text-sm"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden">
+            
+            <!-- Top Header Navbar -->
+            <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-40 shadow-sm">
+                <div class="flex items-center space-x-4">
+                    <button id="openSidebar" class="md:hidden text-slate-600 hover:text-slate-900 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 id="pageTitle" class="text-lg font-bold text-slate-900 tracking-tight">Dashboard Overview</h1>
+                        <p id="pageSubtitle" class="text-xs text-slate-500">Real-time enterprise metrics and e-shop operations.</p>
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="exportERPData()" class="hidden sm:inline-flex items-center px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-sm transition-all">
+                        <i class="fa-solid fa-download text-brand-600 mr-2"></i> Export Data
+                    </button>
+                    <button onclick="openProductModal()" class="hidden sm:inline-flex items-center px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-sm transition-all">
+                        <i class="fa-solid fa-plus text-brand-600 mr-2"></i> Add Product
+                    </button>
+                    <button onclick="openOrderModal()" class="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-brand-600 rounded-lg hover:bg-brand-700 shadow-md shadow-brand-600/20 transition-all">
+                        <i class="fa-solid fa-cart-plus mr-2"></i> New Order
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Viewport -->
+            <main class="flex-1 overflow-y-auto bg-slate-50 p-6">
+                
+                <div id="tab-dashboard" class="tab-content space-y-6 fade-in">
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Total Revenue</p>
+                                <h3 id="kpiRevenue" class="text-2xl font-bold text-slate-900 mt-1">$0.00</h3>
+                                <span class="inline-flex items-center text-xs font-medium text-emerald-600 mt-2 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                    <i class="fa-solid fa-arrow-trend-up mr-1 text-[10px]"></i> +14.2% this month
+                                </span>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Pending Orders</p>
+                                <h3 id="kpiPending" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
+                                <span class="inline-flex items-center text-xs font-medium text-amber-600 mt-2 bg-amber-50 px-2 py-0.5 rounded-md">
+                                    <i class="fa-solid fa-clock mr-1 text-[10px]"></i> Awaiting processing
+                                </span>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-box-open"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Low Stock Alerts</p>
+                                <h3 id="kpiLowStock" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
+                                <span class="inline-flex items-center text-xs font-medium text-rose-600 mt-2 bg-rose-50 px-2 py-0.5 rounded-md">
+                                    <i class="fa-solid fa-triangle-exclamation mr-1 text-[10px]"></i> Restock required
+                                </span>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Registered Customers</p>
+                                <h3 id="kpiCustomers" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
+                                <span class="inline-flex items-center text-xs font-medium text-brand-600 mt-2 bg-brand-50 px-2 py-0.5 rounded-md">
+                                    <i class="fa-solid fa-users mr-1 text-[10px]"></i> Active profiles
+                                </span>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-address-book"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-base font-bold text-slate-900">Revenue & Sales Performance</h2>
+                                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg font-medium">B2C Channel</span>
+                            </div>
+                            <div class="h-72 relative">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <h2 class="text-base font-bold text-slate-900 mb-1">Fulfillment Status</h2>
+                                <p class="text-xs text-slate-500 mb-4">Current order distribution by stage.</p>
+                                <div class="h-56 relative flex items-center justify-center">
+                                    <canvas id="orderStatusChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders Table -->
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h2 class="text-base font-bold text-slate-900">Recent Transactions</h2>
+                                <p class="text-xs text-slate-500">Latest orders flowing through the e-shop gateway.</p>
+                            </div>
+                            <button onclick="switchTab('orders')" class="text-xs font-semibold text-brand-600 hover:text-brand-700">View All Orders &rarr;</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/70 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        <th class="py-3.5 px-6">Order ID</th>
+                                        <th class="py-3.5 px-6">Customer</th>
+                                        <th class="py-3.5 px-6">Items Summary</th>
+                                        <th class="py-3.5 px-6">Total Amount</th>
+                                        <th class="py-3.5 px-6">Status</th>
+                                        <th class="py-3.5 px-6 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentOrdersTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-orders" class="tab-content space-y-6 hidden fade-in">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-search"></i>
+                                </span>
+                                <input type="text" id="orderSearchInput" oninput="renderOrdersTable()" placeholder="Search orders or customers..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-72">
+                            </div>
+                            <select id="orderStatusFilter" onchange="renderOrdersTable()" class="py-2 px-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-700 font-medium">
+                                <option value="ALL">All Statuses</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <button onclick="openOrderModal()" class="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 shadow-md shadow-brand-600/20 transition-all">
+                            <i class="fa-solid fa-cart-plus mr-2"></i> Create New Order
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/70 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        <th class="py-3.5 px-6">Order ID</th>
+                                        <th class="py-3.5 px-6">Customer</th>
+                                        <th class="py-3.5 px-6">Date</th>
+                                        <th class="py-3.5 px-6">Items Summary</th>
+                                        <th class="py-3.5 px-6">Total Amount</th>
+                                        <th class="py-3.5 px-6">Fulfillment Status</th>
+                                        <th class="py-3.5 px-6 text-right">Update Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-inventory" class="tab-content space-y-6 hidden fade-in">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-search"></i>
+                                </span>
+                                <input type="text" id="inventorySearchInput" oninput="renderInventoryTable()" placeholder="Search products or SKU..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-72">
+                            </div>
+                            <select id="warehouseFilter" onchange="renderInventoryTable()" class="py-2 px-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-700 font-medium">
+                                <option value="ALL">All Warehouses</option>
+                                <option value="Warehouse A (Main)">Warehouse A (Main)</option>
+                                <option value="Warehouse B (East)">Warehouse B (East)</option>
+                                <option value="Warehouse C (West)">Warehouse C (West)</option>
+                            </select>
+                        </div>
+                        <button onclick="openProductModal()" class="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 shadow-md shadow-brand-600/20 transition-all">
+                            <i class="fa-solid fa-plus mr-2"></i> Add New Product
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/70 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        <th class="py-3.5 px-6">Product / SKU</th>
+                                        <th class="py-3.5 px-6">Category</th>
+                                        <th class="py-3.5 px-6">Unit Price</th>
+                                        <th class="py-3.5 px-6">Stock Level</th>
+                                        <th class="py-3.5 px-6">Warehouse</th>
+                                        <th class="py-3.5 px-6 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventoryTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-customers" class="tab-content space-y-6 hidden fade-in">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div class="relative w-full sm:w-80">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-search"></i>
+                            </span>
+                            <input type="text" id="customerSearchInput" oninput="renderCustomersTable()" placeholder="Search customer name or email..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-full">
+                        </div>
+                        <div class="text-xs text-slate-500 font-medium">Verified e-shop customer directory</div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/70 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        <th class="py-3.5 px-6">Customer Name</th>
+                                        <th class="py-3.5 px-6">Email Address</th>
+                                        <th class="py-3.5 px-6">Phone Number</th>
+                                        <th class="py-3.5 px-6">Total Orders</th>
+                                        <th class="py-3.5 px-6">Lifetime Spend</th>
+                                        <th class="py-3.5 px-6 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-analytics" class="tab-content space-y-6 hidden fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <h2 class="text-base font-bold text-slate-900 mb-1">Monthly Sales Volume</h2>
+                            <p class="text-xs text-slate-500 mb-6">Completed units sold per month.</p>
+                            <div class="h-80 relative">
+                                <canvas id="analyticsBarChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <h2 class="text-base font-bold text-slate-900 mb-1">Category Turnover Share</h2>
+                            <p class="text-xs text-slate-500 mb-6">Revenue breakdown across product categories.</p>
+                            <div class="h-80 relative flex items-center justify-center">
+                                <canvas id="analyticsDoughnutChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <h2 class="text-base font-bold text-slate-900 mb-4">ERP Financial Summary & KPI Report</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                <p class="text-xs text-slate-500 font-semibold uppercase">Gross Profit Margin</p>
+                                <h4 class="text-xl font-bold text-slate-900 mt-1">68.4%</h4>
+                                <p class="text-xs text-emerald-600 mt-1"><i class="fa-solid fa-circle-check"></i> Healthy margin range</p>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                <p class="text-xs text-slate-500 font-semibold uppercase">Average Order Value (AOV)</p>
+                                <h4 id="summaryAOV" class="text-xl font-bold text-slate-900 mt-1">$0.00</h4>
+                                <p class="text-xs text-brand-600 mt-1"><i class="fa-solid fa-arrow-up"></i> Based on active transactions</p>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                <p class="text-xs text-slate-500 font-semibold uppercase">Fulfillment Success Rate</p>
+                                <h4 class="text-xl font-bold text-slate-900 mt-1">94.2%</h4>
+                                <p class="text-xs text-emerald-600 mt-1"><i class="fa-solid fa-circle-check"></i> On-time dispatch target met</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden border border-slate-100 fade-in">
+            <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+                <h3 id="productModalTitle" class="text-base font-bold">Add New Product</h3>
+                <button onclick="closeProductModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="productForm" onsubmit="handleProductSubmit(event)" class="p-6 space-y-4">
+                <input type="hidden" id="editProductId">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Product Name</label>
+                    <input type="text" id="prodName" required placeholder="e.g. Ergonomic Keyboard" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">SKU Code</label>
+                        <input type="text" id="prodSku" required placeholder="e.g. KB-RGB-99" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Category</label>
+                        <input type="text" id="prodCategory" required placeholder="e.g. Peripherals" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Unit Price ($)</label>
+                        <input type="number" step="0.01" min="0" id="prodPrice" required placeholder="79.99" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Stock Level</label>
+                        <input type="number" min="0" id="prodStock" required placeholder="25" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Warehouse Location</label>
+                    <select id="prodWarehouse" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        <option value="Warehouse A (Main)">Warehouse A (Main)</option>
+                        <option value="Warehouse B (East)">Warehouse B (East)</option>
+                        <option value="Warehouse C (West)">Warehouse C (West)</option>
+                    </select>
+                </div>
+                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">Cancel</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 shadow-md shadow-brand-600/20 transition-all">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="orderModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden border border-slate-100 fade-in">
+            <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+                <h3 class="text-base font-bold">Create New E-Shop Order</h3>
+                <button onclick="closeOrderModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="orderForm" onsubmit="handleOrderSubmit(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Customer Name</label>
+                    <input type="text" id="orderCustomer" required placeholder="e.g. Emily Watson" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Customer Email</label>
+                    <input type="email" id="orderEmail" required placeholder="emily.w@example.com" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Select Product Item</label>
+                    <select id="orderProductSelect" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Quantity</label>
+                    <input type="number" min="1" value="1" id="orderQty" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Initial Status</label>
+                    <select id="orderStatus" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
+                </div>
+                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeOrderModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">Cancel</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 shadow-md shadow-brand-600/20 transition-all">Process Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <script>
+        let inventory = [
+            { id: 1, name: 'UltraHD 4K Monitor 27"', sku: 'MN-4K-27', category: 'Displays', price: 349.99, stock: 4, warehouse: 'Warehouse A (Main)' },
+            { id: 2, name: 'Mechanical RGB Keyboard', sku: 'KB-RGB-88', category: 'Peripherals', price: 89.99, stock: 18, warehouse: 'Warehouse B (East)' },
+            { id: 3, name: 'Wireless Noise-Canceling Headphones', sku: 'HP-NC-90', category: 'Audio', price: 199.50, stock: 6, warehouse: 'Warehouse A (Main)' },
+            { id: 4, name: 'Ergonomic Executive Office Chair', sku: 'CH-ERG-01', category: 'Furniture', price: 249.00, stock: 2, warehouse: 'Warehouse C (West)' },
+            { id: 5, name: 'USB-C Multi-Port Hub Pro', sku: 'HUB-C-10', category: 'Accessories', price: 45.00, stock: 42, warehouse: 'Warehouse B (East)' },
+            { id: 6, name: 'Smart HD Security Camera', sku: 'CAM-HD-02', category: 'Smart Home', price: 79.99, stock: 3, warehouse: 'Warehouse A (Main)' }
+        ];
+
+        let orders = [
+            { id: 'ORD-9021', customer: 'Alex Thompson', email: 'alex.t@example.com', date: '2026-10-06', itemSummary: 'UltraHD 4K Monitor 27" (x1)', total: 349.99, status: 'Processing' },
+            { id: 'ORD-9022', customer: 'Maria Garcia', email: 'm.garcia@example.com', date: '2026-10-07', itemSummary: 'Mechanical RGB Keyboard (x2)', total: 179.98, status: 'Pending' },
+            { id: 'ORD-9023', customer: 'Liam O\'Connor', email: 'liam.oc@example.com', date: '2026-10-07', itemSummary: 'Wireless Headphones (x1)', total: 199.50, status: 'Shipped' },
+            { id: 'ORD-9024', customer: 'Sophia Chen', email: 'sophia.c@example.com', date: '2026-10-08', itemSummary: 'USB-C Multi-Port Hub Pro (x3)', total: 135.00, status: 'Delivered' }
+        ];
+
+        let customers = [
+            { id: 1, name: 'Alex Thompson', email: 'alex.t@example.com', phone: '+1 (555) 234-5678', ordersCount: 5, totalSpend: 1420.50 },
+            { id: 2, name: 'Maria Garcia', email: 'm.garcia@example.com', phone: '+1 (555) 876-5432', ordersCount: 2, totalSpend: 310.45 },
+            { id: 3, name: 'Liam O\'Connor', email: 'liam.oc@example.com', phone: '+1 (555) 345-6789', ordersCount: 8, totalSpend: 2890.00 },
+            { id: 4, name: 'Sophia Chen', email: 'sophia.c@example.com', phone: '+1 (555) 901-2345', ordersCount: 3, totalSpend: 620.00 }
+        ];
+
+        let charts = {};
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initSidebarToggle();
+            refreshAllViews();
+            initCharts();
+        });
+
+        function refreshAllViews() {
+            updateKPIs();
+            renderDashboardRecentOrders();
+            renderOrdersTable();
+            renderInventoryTable();
+            renderCustomersTable();
+            updateProductDropdown();
+            updateBadges();
+            updateAnalyticsCharts();
+        }
+
+        function initSidebarToggle() {
+            const sidebar = document.getElementById('sidebar');
+            const openBtn = document.getElementById('openSidebar');
+            const closeBtn = document.getElementById('closeSidebar');
+
+            openBtn.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+            closeBtn.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-600/25');
+                link.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/60');
+            });
+            event.currentTarget.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-600/25');
+            event.currentTarget.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/60');
+
+            const titles = {
+                dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time enterprise metrics and e-shop operations.' },
+                orders: { title: 'Order Management System (OMS)', subtitle: 'Process, fulfill, and track customer orders across channels.' },
+                inventory: { title: 'Inventory & Warehouse Control', subtitle: 'Manage stock levels, low-stock triggers, and warehouse allocation.' },
+                customers: { title: 'Customer Relationship Hub (CRM)', subtitle: 'Buyer profiles, order history, and lifetime customer value.' },
+                analytics: { title: 'Financial Reports & Analytics', subtitle: 'Turnover statistics, sales volume, and financial audits.' }
+            };
+            document.getElementById('pageTitle').innerText = titles[tabId].title;
+            document.getElementById('pageSubtitle').innerText = titles[tabId].subtitle;
+
+            if(window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
+        }
+
+        function updateKPIs() {
+            const totalRev = orders.filter(o => o.status !== 'Cancelled').reduce((acc, curr) => acc + curr.total, 0);
+            const pendingCount = orders.filter(o => o.status === 'Pending' || o.status === 'Processing').length;
+            const lowStockCount = inventory.filter(p => p.stock <= 5).length;
+
+            document.getElementById('kpiRevenue').innerText = `$${totalRev.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('kpiPending').innerText = pendingCount;
+            document.getElementById('kpiLowStock').innerText = lowStockCount;
+            document.getElementById('kpiCustomers').innerText = customers.length;
+            document.getElementById('summaryAOV').innerText = `$${(totalRev / (orders.length || 1)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        function updateBadges() {
+            const pendingCount = orders.filter(o => o.status === 'Pending').length;
+            const lowStockCount = inventory.filter(p => p.stock <= 5).length;
+
+            document.getElementById('badgePendingOrders').innerText = pendingCount;
+            document.getElementById('badgeLowStock').innerText = lowStockCount;
+        }
+
+        function renderDashboardRecentOrders() {
+            const tbody = document.getElementById('recentOrdersTableBody');
+            tbody.innerHTML = '';
+            
+            orders.slice(0, 4).forEach(order => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-3.5 px-6 font-semibold text-slate-900">${order.id}</td>
+                        <td class="py-3.5 px-6 text-slate-700">${order.customer}</td>
+                        <td class="py-3.5 px-6 text-slate-500 text-xs">${order.itemSummary}</td>
+                        <td class="py-3.5 px-6 font-medium text-slate-900">$${order.total.toFixed(2)}</td>
+                        <td class="py-3.5 px-6">${getStatusBadgeHTML(order.status)}</td>
+                        <td class="py-3.5 px-6 text-right">
+                            <button onclick="switchTab('orders')" class="text-xs text-brand-600 hover:text-brand-700 font-medium">Manage</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            const search = document.getElementById('orderSearchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('orderStatusFilter').value;
+            tbody.innerHTML = '';
+
+            const filtered = orders.filter(o => {
+                const matchesSearch = o.id.toLowerCase().includes(search) || o.customer.toLowerCase().includes(search) || o.email.toLowerCase().includes(search);
+                const matchesStatus = statusFilter === 'ALL' || o.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 text-sm">No orders found matching criteria.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(order => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-3.5 px-6 font-semibold text-slate-900">${order.id}</td>
+                        <td class="py-3.5 px-6">
+                            <div class="font-medium text-slate-900">${order.customer}</div>
+                            <div class="text-xs text-slate-400">${order.email}</div>
+                        </td>
+                        <td class="py-3.5 px-6 text-slate-500 text-xs">${order.date}</td>
+                        <td class="py-3.5 px-6 text-slate-600 text-xs">${order.itemSummary}</td>
+                        <td class="py-3.5 px-6 font-medium text-slate-900">$${order.total.toFixed(2)}</td>
+                        <td class="py-3.5 px-6">${getStatusBadgeHTML(order.status)}</td>
+                        <td class="py-3.5 px-6 text-right">
+                            <select onchange="updateOrderStatus('${order.id}', this.value)" class="text-xs py-1.5 px-2.5 bg-slate-100 border border-slate-300 rounded-lg font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                                <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                                <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            const search = document.getElementById('inventorySearchInput').value.toLowerCase();
+            const whFilter = document.getElementById('warehouseFilter').value;
+            tbody.innerHTML = '';
+
+            const filtered = inventory.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(search) || p.sku.toLowerCase().includes(search) || p.category.toLowerCase().includes(search);
+                const matchesWh = whFilter === 'ALL' || p.warehouse === whFilter;
+                return matchesSearch && matchesWh;
+            });
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 text-sm">No products found in inventory.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(prod => {
+                const isLow = prod.stock <= 5;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-3.5 px-6">
+                            <div class="font-semibold text-slate-900">${prod.name}</div>
+                            <div class="text-xs text-slate-400 font-mono">SKU: ${prod.sku}</div>
+                        </td>
+                        <td class="py-3.5 px-6 text-slate-600 text-xs font-medium"><span class="px-2.5 py-1 bg-slate-100 rounded-lg">${prod.category}</span></td>
+                        <td class="py-3.5 px-6 font-medium text-slate-900">$${prod.price.toFixed(2)}</td>
+                        <td class="py-3.5 px-6">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${isLow ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700'}">
+                                ${prod.stock} units ${isLow ? '<i class="fa-solid fa-triangle-exclamation ml-1.5 text-rose-500"></i>' : ''}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-6 text-slate-500 text-xs">${prod.warehouse}</td>
+                        <td class="py-3.5 px-6 text-right space-x-3">
+                            <button onclick="editProduct(${prod.id})" class="text-xs text-brand-600 hover:text-brand-700 font-medium"><i class="fa-solid fa-pen-to-square mr-1"></i> Edit</button>
+                            <button onclick="deleteProduct(${prod.id})" class="text-xs text-rose-500 hover:text-rose-700 font-medium"><i class="fa-solid fa-trash mr-1"></i> Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderCustomersTable() {
+            const tbody = document.getElementById('customersTableBody');
+            const search = document.getElementById('customerSearchInput').value.toLowerCase();
+            tbody.innerHTML = '';
+
+            const filtered = customers.filter(c => c.name.toLowerCase().includes(search) || c.email.toLowerCase().includes(search));
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 text-sm">No customers found.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(cust => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-3.5 px-6 font-semibold text-slate-900 flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-600 font-bold flex items-center justify-center text-xs">
+                                ${cust.name.charAt(0)}
+                            </div>
+                            <span>${cust.name}</span>
+                        </td>
+                        <td class="py-3.5 px-6 text-slate-600 text-xs">${cust.email}</td>
+                        <td class="py-3.5 px-6 text-slate-500 text-xs">${cust.phone}</td>
+                        <td class="py-3.5 px-6 text-slate-700 font-medium">${cust.ordersCount} orders</td>
+                        <td class="py-3.5 px-6 font-bold text-slate-900">$${cust.totalSpend.toFixed(2)}</td>
+                        <td class="py-3.5 px-6 text-right">
+                            <button onclick="showToast('Viewing profile records for ${cust.name}', 'info')" class="text-xs text-brand-600 hover:text-brand-700 font-medium">View Profile</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function getStatusBadgeHTML(status) {
+            switch(status) {
+                case 'Pending':
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>Pending</span>`;
+                case 'Processing':
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5 animate-pulse"></span>Processing</span>`;
+                case 'Shipped':
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-1.5"></span>Shipped</span>`;
+                case 'Delivered':
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>Delivered</span>`;
+                case 'Cancelled':
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>Cancelled</span>`;
+                default:
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">${status}</span>`;
+            }
+        }
+
+        function openProductModal(id = null) {
+            document.getElementById('productForm').reset();
+            document.getElementById('editProductId').value = '';
+            if(id) {
+                document.getElementById('productModalTitle').innerText = 'Edit Product Details';
+                const p = inventory.find(item => item.id === id);
+                if(p) {
+                    document.getElementById('editProductId').value = p.id;
+                    document.getElementById('prodName').value = p.name;
+                    document.getElementById('prodSku').value = p.sku;
+                    document.getElementById('prodCategory').value = p.category;
+                    document.getElementById('prodPrice').value = p.price;
+                    document.getElementById('prodStock').value = p.stock;
+                    document.getElementById('prodWarehouse').value = p.warehouse;
+                }
+            } else {
+                document.getElementById('productModalTitle').innerText = 'Add New Product';
+            }
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function handleProductSubmit(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editProductId').value;
+            const name = document.getElementById('prodName').value;
+            const sku = document.getElementById('prodSku').value;
+            const category = document.getElementById('prodCategory').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const stock = parseInt(document.getElementById('prodStock').value);
+            const warehouse = document.getElementById('prodWarehouse').value;
+
+            if(editId) {
+                const item = inventory.find(i => i.id == editId);
+                if(item) {
+                    item.name = name;
+                    item.sku = sku;
+                    item.category = category;
+                    item.price = price;
+                    item.stock = stock;
+                    item.warehouse = warehouse;
+                    showToast(`Product "${name}" updated successfully.`, 'success');
+                }
+            } else {
+                inventory.push({ id: Date.now(), name, sku, category, price, stock, warehouse });
+                showToast(`Product "${name}" added to inventory.`, 'success');
+            }
+
+            closeProductModal();
+            refreshAllViews();
+        }
+
+        function editProduct(id) {
+            openProductModal(id);
+        }
+
+        function deleteProduct(id) {
+            if(confirm('Are you sure you want to remove this product from inventory?')) {
+                inventory = inventory.filter(i => i.id !== id);
+                showToast('Product removed.', 'info');
+                refreshAllViews();
+            }
+        }
+
+        function openOrderModal() {
+            updateProductDropdown();
+            document.getElementById('orderForm').reset();
+            document.getElementById('orderModal').classList.remove('hidden');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.add('hidden');
+        }
+
+        function updateProductDropdown() {
+            const select = document.getElementById('orderProductSelect');
+            select.innerHTML = '';
+            inventory.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.name} ($${p.price.toFixed(2)} - Stock: ${p.stock})</option>`;
+            });
+        }
+
+        function handleOrderSubmit(e) {
+            e.preventDefault();
+            const customerName = document.getElementById('orderCustomer').value;
+            const customerEmail = document.getElementById('orderEmail').value;
+            const prodId = parseInt(document.getElementById('orderProductSelect').value);
+            const qty = parseInt(document.getElementById('orderQty').value);
+            const status = document.getElementById('orderStatus').value;
+
+            const product = inventory.find(p => p.id === prodId);
+            if(!product) return;
+
+            if(product.stock < qty) {
+                showToast(`Insufficient stock! Only ${product.stock} units available.`, 'error');
+                return;
+            }
+
+            product.stock -= qty;
+
+            const newOrder = {
+                id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+                customer: customerName,
+                email: customerEmail,
+                date: new Date().toISOString().split('T')[0],
+                itemSummary: `${product.name} (x${qty})`,
+                total: product.price * qty,
+                status: status
+            };
+
+            orders.unshift(newOrder);
+
+            let existingCust = customers.find(c => c.email.toLowerCase() === customerEmail.toLowerCase());
+            if(existingCust) {
+                existingCust.ordersCount += 1;
+                existingCust.totalSpend += newOrder.total;
+            } else {
+                customers.push({
+                    id: Date.now(),
+                    name: customerName,
+                    email: customerEmail,
+                    phone: '+1 (555) 000-0000',
+                    ordersCount: 1,
+                    totalSpend: newOrder.total
+                });
+            }
+
+            closeOrderModal();
+            showToast(`Order ${newOrder.id} successfully created and stock deducted.`, 'success');
+            refreshAllViews();
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if(order) {
+                order.status = newStatus;
+                showToast(`Order ${orderId} status updated to ${newStatus}.`, 'success');
+                updateKPIs();
+                updateBadges();
+                renderDashboardRecentOrders();
+                renderOrdersTable();
+                updateAnalyticsCharts();
+            }
+        }
+
+        function exportERPData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ inventory, orders, customers }, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `OmniCore_ERP_Export_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('ERP database successfully exported as JSON.', 'success');
+        }
+
+        function initCharts() {
+            const revCtx = document.getElementById('revenueChart').getContext('2d');
+            charts.revenue = new Chart(revCtx, {
+                type: 'line',
+                data: {
+                    labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                    datasets: [{
+                        label: 'Monthly Revenue ($)',
+                        data: [18400, 22100, 24800, 21900, 29500, 34200],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.08)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#4f46e5',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+                        x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                    }
+                }
+            });
+
+            const statusCtx = document.getElementById('orderStatusChart').getContext('2d');
+            charts.status = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+                    datasets: [{
+                        data: [1, 1, 1, 1, 0],
+                        backgroundColor: ['#fbbf24', '#3b82f6', '#6366f1', '#10b981', '#cbd5e1'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } },
+                    cutout: '65%'
+                }
+            });
+
+            const barCtx = document.getElementById('analyticsBarChart').getContext('2d');
+            charts.bar = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                    datasets: [{
+                        label: 'Units Sold',
+                        data: [142, 180, 195, 170, 230, 265],
+                        backgroundColor: '#6366f1',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+                        x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                    }
+                }
+            });
+
+            const catCtx = document.getElementById('analyticsDoughnutChart').getContext('2d');
+            charts.category = new Chart(catCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Displays', 'Peripherals', 'Audio', 'Furniture', 'Accessories', 'Smart Home'],
+                    datasets: [{
+                        data: [35, 20, 15, 12, 10, 8],
+                        backgroundColor: ['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }
+                }
+            });
+        }
+
+        function updateAnalyticsCharts() {
+            if(!charts.status) return;
+            const pending = orders.filter(o => o.status === 'Pending').length;
+            const processing = orders.filter(o => o.status === 'Processing').length;
+            const shipped = orders.filter(o => o.status === 'Shipped').length;
+            const delivered = orders.filter(o => o.status === 'Delivered').length;
+            const cancelled = orders.filter(o => o.status === 'Cancelled').length;
+
+            charts.status.data.datasets[0].data = [pending, processing, shipped, delivered, cancelled];
+            charts.status.update();
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-900 text-white';
+            let icon = '<i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i>';
+            if(type === 'error') {
+                bgClass = 'bg-rose-600 text-white';
+                icon = '<i class="fa-solid fa-circle-exclamation text-white mr-2"></i>';
+            } else if(type === 'info') {
+                bgClass = 'bg-blue-600 text-white';
+                icon = '<i class="fa-solid fa-circle-info text-white mr-2"></i>';
+            }
+
+            toast.className = `pointer-events-auto flex items-center px-4 py-3 rounded-xl shadow-xl ${bgClass} text-xs font-semibold fade-in`;
+            toast.innerHTML = `${icon}<span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
